@@ -125,6 +125,7 @@ $(find . -name magnolia_control.sh) start --ignore-open-files-limit
 # Create nginx reverse proxy configuration for Magnolia CMS
 echo "[$(date)] Creating nginx reverse proxy for Magnolia CMS..."
 cat > /etc/nginx/conf.d/magnolia.conf <<'NGINX_CONF'
+server {
   listen 80;
   server_name _;
 
