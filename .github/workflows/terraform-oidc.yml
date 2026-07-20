@@ -10,6 +10,18 @@ on:
     branches: [ main ]
     paths:
       - 'terraform/**'
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: 'Run terraform destroy instead of apply'
+        required: false
+        type: boolean
+        default: false
+      confirm_destroy:
+        description: 'Require true to execute destroy'
+        required: false
+        type: boolean
+        default: false
 
 env:
   TERRAFORM_VERSION: 1.5.0
@@ -71,7 +83,7 @@ jobs:
 
   terraform-apply:
     needs: terraform-plan
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -95,9 +107,20 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -out=tfplan
 
-      - name: Terraform Apply
+      - name: Confirm destroy
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.destroy == 'true' && github.event.inputs.confirm_destroy != 'true' }}
+        run: |
+          echo "Destroy requested but not confirmed. Set confirm_destroy=true to proceed."
+          exit 1
+
+      - name: Terraform Apply or Destroy
         working-directory: ./terraform
-        run: terraform apply -auto-approve tfplan
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.destroy }}" = "true" ]; then
+            terraform destroy -auto-approve
+          else
+            terraform apply -auto-approve tfplan
+          fi
 
       - name: Terraform Output
         working-directory: ./terraform
