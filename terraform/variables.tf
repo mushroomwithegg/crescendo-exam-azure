@@ -95,6 +95,34 @@ variable "vm_size" {
   default     = "D2ps_v6"
 }
 
+variable "instances" {
+  type        = number
+  description = "Number of instances for the compute VM scale set. Use more than 1 for rolling upgrades."
+  default     = 1
+}
+
+variable "upgrade_mode" {
+  type        = string
+  description = "VM scale set upgrade mode (Manual, Automatic, Rolling)."
+  default     = "Manual"
+}
+
+variable "rolling_upgrade_policy" {
+  type = object({
+    max_batch_instance_percent             = number
+    max_unhealthy_instance_percent         = number
+    max_unhealthy_upgraded_instance_percent = number
+    pause_time_between_batches             = string
+  })
+  description = "Rolling upgrade policy values when upgrade_mode is Rolling."
+  default = {
+    max_batch_instance_percent             = 50
+    max_unhealthy_instance_percent         = 20
+    max_unhealthy_upgraded_instance_percent = 20
+    pause_time_between_batches             = "PT5M"
+  }
+}
+
 variable "zones" {
   type        = list(string)
   description = "Availability zones for the VM Scale Set."

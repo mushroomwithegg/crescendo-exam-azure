@@ -49,6 +49,9 @@ module "compute" {
   allowed_ssh_cidr                    = var.allowed_ssh_cidr
   application_gateway_subnet_prefix   = var.application_gateway_subnet_prefix
   bastion_subnet_prefix               = var.bastion_subnet_prefix
+  instances                           = var.instances
+  upgrade_mode                        = var.upgrade_mode
+  rolling_upgrade_policy              = var.rolling_upgrade_policy
   application_gateway_backend_pool_id = tolist(azurerm_application_gateway.this.backend_address_pool)[0].id
   tags                                = var.tags
 }

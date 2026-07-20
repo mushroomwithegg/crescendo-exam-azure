@@ -20,6 +20,34 @@ variable "vm_size" {
   default     = "Standard_B1ms"
 }
 
+variable "instances" {
+  type        = number
+  description = "Number of VM instances in the scale set. Use more than 1 for rolling updates."
+  default     = 1
+}
+
+variable "upgrade_mode" {
+  type        = string
+  description = "Upgrade mode for the VM Scale Set (Manual, Automatic, Rolling)."
+  default     = "Manual"
+}
+
+variable "rolling_upgrade_policy" {
+  type = object({
+    max_batch_instance_percent             = number
+    max_unhealthy_instance_percent         = number
+    max_unhealthy_upgraded_instance_percent = number
+    pause_time_between_batches             = string
+  })
+  description = "Rolling upgrade policy for the VMSS when upgrade_mode is Rolling."
+  default = {
+    max_batch_instance_percent             = 50
+    max_unhealthy_instance_percent         = 20
+    max_unhealthy_upgraded_instance_percent = 20
+    pause_time_between_batches             = "PT5M"
+  }
+}
+
 variable "public_subnet_id" {
   type        = string
   description = "ID of the public subnet where the VMSS instances will be placed."

@@ -62,9 +62,19 @@ resource "azurerm_linux_virtual_machine_scale_set" "vm" {
   zones               = var.zones
 
   sku       = var.vm_size
-  instances = 1
+  instances = var.instances
 
-  upgrade_mode = "Manual"
+  upgrade_mode = var.upgrade_mode
+
+  dynamic "rolling_upgrade_policy" {
+    for_each = var.upgrade_mode == "Rolling" ? [var.rolling_upgrade_policy] : []
+    content {
+      max_batch_instance_percent             = rolling_upgrade_policy.value.max_batch_instance_percent
+      max_unhealthy_instance_percent         = rolling_upgrade_policy.value.max_unhealthy_instance_percent
+      max_unhealthy_upgraded_instance_percent = rolling_upgrade_policy.value.max_unhealthy_upgraded_instance_percent
+      pause_time_between_batches             = rolling_upgrade_policy.value.pause_time_between_batches
+    }
+  }
 
   network_interface {
     name    = "primary"
