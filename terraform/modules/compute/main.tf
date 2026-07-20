@@ -71,9 +71,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "vm" {
     primary = true
 
     ip_configuration {
-      name                                        = "ipconfig"
-      subnet_id                                   = var.public_subnet_id
-      primary                                     = true
+      name                                         = "ipconfig"
+      subnet_id                                    = var.public_subnet_id
+      primary                                      = true
       application_gateway_backend_address_pool_ids = [var.application_gateway_backend_pool_id]
     }
   }
@@ -171,14 +171,14 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
 
     rule {
       metric_trigger {
-        metric_name              = "Percentage CPU"
-        metric_resource_id       = azurerm_linux_virtual_machine_scale_set.vm.id
-        time_grain               = "PT1M"
-        statistic                = "Average"
-        time_window              = "PT5M"
-        time_aggregation         = "Average"
-        operator                 = "GreaterThan"
-        threshold                = 90
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.vm.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 90
       }
 
       scale_action {
@@ -191,14 +191,14 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
 
     rule {
       metric_trigger {
-        metric_name              = "Available Memory Percentage"
-        metric_resource_id       = azurerm_linux_virtual_machine_scale_set.vm.id
-        time_grain               = "PT1M"
-        statistic                = "Average"
-        time_window              = "PT5M"
-        time_aggregation         = "Average"
-        operator                 = "LessThan"
-        threshold                = 10
+        metric_name        = "Available Memory Percentage"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.vm.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 10
       }
 
       scale_action {
@@ -211,14 +211,14 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
 
     rule {
       metric_trigger {
-        metric_name              = "Percentage CPU"
-        metric_resource_id       = azurerm_linux_virtual_machine_scale_set.vm.id
-        time_grain               = "PT1M"
-        statistic                = "Average"
-        time_window              = "PT5M"
-        time_aggregation         = "Average"
-        operator                 = "LessThan"
-        threshold                = 25
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.vm.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 25
       }
 
       scale_action {
@@ -231,14 +231,14 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
 
     rule {
       metric_trigger {
-        metric_name              = "Available Memory Percentage"
-        metric_resource_id       = azurerm_linux_virtual_machine_scale_set.vm.id
-        time_grain               = "PT1M"
-        statistic                = "Average"
-        time_window              = "PT5M"
-        time_aggregation         = "Average"
-        operator                 = "GreaterThan"
-        threshold                = 25
+        metric_name        = "Available Memory Percentage"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.vm.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 25
       }
 
       scale_action {

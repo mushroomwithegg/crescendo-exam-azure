@@ -32,24 +32,24 @@ module "network" {
 }
 
 module "compute" {
-  source                             = "./modules/compute"
-  resource_group_name                = var.resource_group_name
-  location                           = var.location
-  vm_name                            = var.vm_name
-  vm_size                            = var.vm_size
-  zones                              = var.zones
-  admin_username                     = var.admin_username
-  public_subnet_id                   = module.network.public_subnet_id
-  admin_ssh_public_key               = var.admin_ssh_public_key
-  vm_image_publisher                 = var.vm_image_publisher
-  vm_image_offer                     = var.vm_image_offer
-  vm_image_sku                       = var.vm_image_sku
-  vm_image_version                   = var.vm_image_version
-  allowed_ssh_cidr                   = var.allowed_ssh_cidr
-  application_gateway_subnet_prefix  = var.application_gateway_subnet_prefix
-  bastion_subnet_prefix              = var.bastion_subnet_prefix
+  source                              = "./modules/compute"
+  resource_group_name                 = var.resource_group_name
+  location                            = var.location
+  vm_name                             = var.vm_name
+  vm_size                             = var.vm_size
+  zones                               = var.zones
+  admin_username                      = var.admin_username
+  public_subnet_id                    = module.network.public_subnet_id
+  admin_ssh_public_key                = var.admin_ssh_public_key
+  vm_image_publisher                  = var.vm_image_publisher
+  vm_image_offer                      = var.vm_image_offer
+  vm_image_sku                        = var.vm_image_sku
+  vm_image_version                    = var.vm_image_version
+  allowed_ssh_cidr                    = var.allowed_ssh_cidr
+  application_gateway_subnet_prefix   = var.application_gateway_subnet_prefix
+  bastion_subnet_prefix               = var.bastion_subnet_prefix
   application_gateway_backend_pool_id = tolist(azurerm_application_gateway.this.backend_address_pool)[0].id
-  tags                              = var.tags
+  tags                                = var.tags
 }
 
 resource "azurerm_public_ip" "application_gateway" {
