@@ -64,7 +64,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vm" {
   sku       = var.vm_size
   instances = var.instances
 
-  upgrade_mode = var.upgrade_mode
+  upgrade_mode    = var.upgrade_mode
+  health_probe_id = var.application_gateway_health_probe_id
 
   dynamic "rolling_upgrade_policy" {
     for_each = var.upgrade_mode == "Rolling" ? [var.rolling_upgrade_policy] : []

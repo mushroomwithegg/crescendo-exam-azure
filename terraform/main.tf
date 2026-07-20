@@ -53,6 +53,7 @@ module "compute" {
   upgrade_mode                        = var.upgrade_mode
   rolling_upgrade_policy              = var.rolling_upgrade_policy
   application_gateway_backend_pool_id = tolist(azurerm_application_gateway.this.backend_address_pool)[0].id
+  application_gateway_health_probe_id = tolist(azurerm_application_gateway.this.probe)[0].id
   tags                                = var.tags
 }
 
@@ -124,6 +125,7 @@ resource "azurerm_application_gateway" "this" {
     port                  = 80
     protocol              = "Http"
     request_timeout       = 30
+    probe_name            = "appgw-health-probe"
   }
 
   http_listener {
@@ -140,6 +142,16 @@ resource "azurerm_application_gateway" "this" {
     http_listener_name         = "appgw-http-listener"
     backend_address_pool_name  = "appgw-backend-pool"
     backend_http_settings_name = "appgw-backend-http-settings"
+  }
+
+  probe {
+    name                = "appgw-health-probe"
+    protocol            = "Http"
+    host                = "localhost"
+    path                = "/"
+    interval            = 30
+    timeout             = 30
+    unhealthy_threshold = 3
   }
 
   tags = var.tags

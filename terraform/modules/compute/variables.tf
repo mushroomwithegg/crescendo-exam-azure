@@ -64,6 +64,11 @@ variable "application_gateway_backend_pool_id" {
   description = "ID of the Application Gateway backend pool for the VM Scale Set."
 }
 
+variable "application_gateway_health_probe_id" {
+  type        = string
+  description = "ID of the Application Gateway health probe used by the VM Scale Set rolling upgrade."
+}
+
 variable "admin_username" {
   type        = string
   description = "Admin username for the VM."
