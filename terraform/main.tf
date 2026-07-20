@@ -53,7 +53,7 @@ module "compute" {
   upgrade_mode                        = var.upgrade_mode
   rolling_upgrade_policy              = var.rolling_upgrade_policy
   application_gateway_backend_pool_id = tolist(azurerm_application_gateway.this.backend_address_pool)[0].id
-  application_gateway_health_probe_id = tolist(azurerm_application_gateway.this.probe)[0].id
+  application_gateway_health_probe_id = "${azurerm_application_gateway.this.id}/probes/${tolist(azurerm_application_gateway.this.probe)[0].name}"
   tags                                = var.tags
 }
 
