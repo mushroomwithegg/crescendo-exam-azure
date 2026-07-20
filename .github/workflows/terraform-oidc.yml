@@ -1,4 +1,4 @@
-name: 'Terraform Apply (OIDC)'
+name: 'Manage Terraform Infrastructure with OIDC'
 
 on:
   push:
@@ -81,7 +81,7 @@ jobs:
           name: tfplan
           path: ./terraform/tfplan
 
-  terraform-apply:
+  terraform-apply-or-destroy:
     needs: terraform-plan
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
