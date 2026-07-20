@@ -22,3 +22,8 @@ output "application_gateway_public_ip_address" {
   value       = azurerm_public_ip.application_gateway.ip_address
   description = "Public IP address assigned to the Application Gateway."
 }
+
+output "magnolia_version" {
+  value       = module.compute.magnolia_version
+  description = "Magnolia CMS version configured for the deployed compute module."
+}
