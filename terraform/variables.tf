@@ -109,17 +109,17 @@ variable "upgrade_mode" {
 
 variable "rolling_upgrade_policy" {
   type = object({
-    max_batch_instance_percent             = number
-    max_unhealthy_instance_percent         = number
+    max_batch_instance_percent              = number
+    max_unhealthy_instance_percent          = number
     max_unhealthy_upgraded_instance_percent = number
-    pause_time_between_batches             = string
+    pause_time_between_batches              = string
   })
   description = "Rolling upgrade policy values when upgrade_mode is Rolling."
   default = {
-    max_batch_instance_percent             = 50
-    max_unhealthy_instance_percent         = 20
+    max_batch_instance_percent              = 50
+    max_unhealthy_instance_percent          = 20
     max_unhealthy_upgraded_instance_percent = 20
-    pause_time_between_batches             = "PT5M"
+    pause_time_between_batches              = "PT5M"
   }
 }
 
