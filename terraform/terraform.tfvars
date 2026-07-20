@@ -18,3 +18,9 @@ vm_size              = "Standard_D2s_v3"
 vm_image_sku         = "20_04-lts-gen2"
 allowed_ssh_cidr     = "122.2.109.10/32"
 upgrade_mode         = "Rolling"
+rolling_upgrade_policy = {
+  max_batch_instance_percent              = 20
+  max_unhealthy_instance_percent          = 20
+  max_unhealthy_upgraded_instance_percent = 20
+  pause_time_between_batches              = "PT5M"
+}
