@@ -101,7 +101,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vm" {
     #!/bin/bash
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
-    apt-get install -y nginx tomcat9 unzip wget
+    apt-get install -y nginx openjdk-11-jdk unzip wget
+    echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' | tee -a /etc/environment
     systemctl enable nginx
     systemctl start nginx
     # Verify nginx is running before writing to webroot
