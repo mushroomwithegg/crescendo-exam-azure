@@ -151,6 +151,10 @@ EOT
   ))
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [custom_data]
+  }
 }
 
 resource "azurerm_monitor_autoscale_setting" "vmss" {
