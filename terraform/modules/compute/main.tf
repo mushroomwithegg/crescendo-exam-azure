@@ -97,58 +97,58 @@ resource "azurerm_linux_virtual_machine_scale_set" "vm" {
     public_key = var.admin_ssh_public_key
   }
 
-  custom_data = base64encode(<<-EOT
-    #!/bin/bash
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update
-    apt-get install -y nginx openjdk-11-jdk unzip wget
-    echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' | tee -a /etc/environment
-    systemctl enable nginx
-    systemctl start nginx
-    # Verify nginx is running before writing to webroot
-    sleep 2
-    if ! systemctl is-active --quiet nginx; then
-      echo "[$(date)] ERROR: nginx failed to start"
-      exit 1
-    fi
-    
-    # Install Magnolia CMS (example application)
-    wget -O magnolia-cms.zip https://nexus.magnolia-cms.com/repository/public/info/magnolia/bundle/magnolia-community-demo-webapp/6.2.74/magnolia-community-demo-webapp-6.2.74-tomcat-bundle.zip
-    unzip magnolia-cms.zip
-    ./$(find . -name magnolia_control.sh) start --ignore-open-files-limit
+  custom_data = base64encode(trimspace(<<-EOT
+#!/bin/bash
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y nginx openjdk-11-jdk unzip wget
+echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' | tee -a /etc/environment
+systemctl enable nginx
+systemctl start nginx
+# Verify nginx is running before writing to webroot
+sleep 2
+if ! systemctl is-active --quiet nginx; then
+  echo "[$(date)] ERROR: nginx failed to start"
+  exit 1
+fi
 
-    # Create nginx reverse proxy configuration for Magnolia CMS
-    echo "[$(date)] Creating nginx reverse proxy for Magnolia CMS..."
-    cat > /etc/nginx/conf.d/magnolia.conf <<'NGINX_CONF'
-    server {
-      listen 80;
-      server_name _;
+# Install Magnolia CMS (example application)
+wget -O magnolia-cms.zip https://nexus.magnolia-cms.com/repository/public/info/magnolia/bundle/magnolia-community-demo-webapp/6.2.74/magnolia-community-demo-webapp-6.2.74-tomcat-bundle.zip
+unzip magnolia-cms.zip
+./$(find . -name magnolia_control.sh) start --ignore-open-files-limit
 
-      client_max_body_size 100M;
+# Create nginx reverse proxy configuration for Magnolia CMS
+echo "[$(date)] Creating nginx reverse proxy for Magnolia CMS..."
+cat > /etc/nginx/conf.d/magnolia.conf <<'NGINX_CONF'
+server {
+  listen 80;
+  server_name _;
 
-      location / {
-        proxy_pass http://localhost:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+  client_max_body_size 100M;
 
-        # Fix potential redirect loops
-        proxy_redirect off;
-      }
-    }
-    NGINX_CONF
+  location / {
+    proxy_pass http://localhost:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
 
-    cp /etc/nginx/conf.d/magnolia.conf /etc/nginx/sites-available/magnolia
-    ln -s /etc/nginx/sites-available/magnolia /etc/nginx/sites-enabled/
-    rm /etc/nginx/sites-enabled/default
-    
-    # Reload nginx to apply the new configuration
-    systemctl reload nginx
+    # Fix potential redirect loops
+    proxy_redirect off;
+  }
+}
+NGINX_CONF
 
-    echo "[$(date)] User data script completed successfully"
-    EOT
-  )
+cp /etc/nginx/conf.d/magnolia.conf /etc/nginx/sites-available/magnolia
+ln -s /etc/nginx/sites-available/magnolia /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+# Reload nginx to apply the new configuration
+systemctl reload nginx
+
+echo "[$(date)] User data script completed successfully"
+EOT
+  ))
 
   tags = var.tags
 }
