@@ -41,7 +41,7 @@ variable "rolling_upgrade_policy" {
   })
   description = "Rolling upgrade policy for the VMSS when upgrade_mode is Rolling."
   default = {
-    max_batch_instance_percent              = 50
+    max_batch_instance_percent              = 20
     max_unhealthy_instance_percent          = 20
     max_unhealthy_upgraded_instance_percent = 20
     pause_time_between_batches              = "PT5M"
