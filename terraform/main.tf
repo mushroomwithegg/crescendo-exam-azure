@@ -45,6 +45,7 @@ module "compute" {
   vm_image_offer                      = var.vm_image_offer
   vm_image_sku                        = var.vm_image_sku
   vm_image_version                    = var.vm_image_version
+  magnolia_version                    = var.magnolia_version
   allowed_ssh_cidr                    = var.allowed_ssh_cidr
   application_gateway_subnet_prefix   = var.application_gateway_subnet_prefix
   bastion_subnet_prefix               = var.bastion_subnet_prefix

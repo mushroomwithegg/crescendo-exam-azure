@@ -131,6 +131,12 @@ variable "vm_image_version" {
   default     = "latest"
 }
 
+variable "magnolia_version" {
+  type        = string
+  description = "Magnolia CMS version to install on the compute VM."
+  default     = "6.2.74"
+}
+
 variable "allowed_ssh_cidr" {
   type        = string
   description = "CIDR (e.g. 1.2.3.4/32) allowed to SSH into the VM. Set to empty string to disable NSG."

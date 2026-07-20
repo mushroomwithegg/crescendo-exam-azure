@@ -113,14 +113,18 @@ if ! systemctl is-active --quiet nginx; then
 fi
 
 # Install Magnolia CMS (example application)
-wget -O magnolia-cms.zip https://nexus.magnolia-cms.com/repository/public/info/magnolia/bundle/magnolia-community-demo-webapp/6.2.74/magnolia-community-demo-webapp-6.2.74-tomcat-bundle.zip
+mkdir -p /opt/magnolia/releases
+cd /opt/magnolia/releases
+wget -O magnolia-cms.zip https://nexus.magnolia-cms.com/repository/public/info/magnolia/bundle/magnolia-community-demo-webapp/${var.magnolia_version}/magnolia-community-demo-webapp-${var.magnolia_version}-tomcat-bundle.zip
 unzip magnolia-cms.zip
-./$(find . -name magnolia_control.sh) start --ignore-open-files-limit
+rm -f magnolia-cms.zip
+ln -sfn /opt/magnolia/releases/magnolia-${var.magnolia_version} /opt/magnolia/current
+cd /opt/magnolia/current/
+$(find . -name magnolia_control.sh) start --ignore-open-files-limit
 
 # Create nginx reverse proxy configuration for Magnolia CMS
 echo "[$(date)] Creating nginx reverse proxy for Magnolia CMS..."
 cat > /etc/nginx/conf.d/magnolia.conf <<'NGINX_CONF'
-server {
   listen 80;
   server_name _;
 
