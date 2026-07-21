@@ -119,7 +119,7 @@ variable "rolling_upgrade_policy" {
     max_batch_instance_percent              = 50
     max_unhealthy_instance_percent          = 20
     max_unhealthy_upgraded_instance_percent = 20
-    pause_time_between_batches              = "PT5M"
+    pause_time_between_batches              = "PT10M"
   }
 }
 
