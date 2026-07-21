@@ -52,9 +52,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.magnolia_version }}" ]; then
             echo "Deploying Magnolia version ${{ github.event.inputs.magnolia_version }}"
             terraform plan -out=tfplan \
-              -var "magnolia_version=${{ github.event.inputs.magnolia_version }}" \
-              -var "upgrade_mode=Automatic" \
-              -var "instances=2"
+              -var "magnolia_version=${{ github.event.inputs.magnolia_version }}"
           else
             terraform plan -out=tfplan
           fi
