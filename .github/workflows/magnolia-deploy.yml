@@ -1,0 +1,83 @@
+name: Magnolia CMS Version Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      magnolia_version:
+        description: 'Magnolia CMS version to deploy'
+        required: false
+        default: '6.2.74'
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/magnolia-deploy.yml'
+
+env:
+  TERRAFORM_VERSION: 1.5.0
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_BACKEND_RESOURCE_GROUP: ${{ secrets.ARM_BACKEND_RESOURCE_GROUP }}
+  ARM_BACKEND_STORAGE_ACCOUNT: ${{ secrets.ARM_BACKEND_STORAGE_ACCOUNT }}
+  ARM_BACKEND_CONTAINER: ${{ secrets.ARM_BACKEND_CONTAINER }}
+  ARM_BACKEND_KEY: ${{ secrets.ARM_BACKEND_KEY }}
+  ARM_USE_OIDC: true
+  ARM_OIDC_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+  ARM_OIDC_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  magnolia-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=$ARM_BACKEND_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$ARM_BACKEND_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$ARM_BACKEND_CONTAINER" \
+            -backend-config="key=$ARM_BACKEND_KEY"
+
+      - name: Terraform Plan for Magnolia
+        working-directory: ./terraform
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.magnolia_version }}" ]; then
+            echo "Deploying Magnolia version ${{ github.event.inputs.magnolia_version }}"
+            terraform plan -out=tfplan \
+              -var "magnolia_version=${{ github.event.inputs.magnolia_version }}" \
+              -var "upgrade_mode=Automatic" \
+              -var "instances=2"
+          else
+            terraform plan -out=tfplan
+          fi
+
+      - name: Check current Magnolia version
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./terraform
+        id: version_check
+        run: |
+          current=$(terraform output -raw magnolia_version 2>/dev/null || echo "")
+          echo "Current deployed Magnolia version: $current"
+          if [ "$current" = "${{ github.event.inputs.magnolia_version }}" ]; then
+            echo "skip_apply=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip_apply=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && steps.version_check.outputs.skip_apply == 'false')
+        working-directory: ./terraform
+        run: terraform apply -auto-approve tfplan
