@@ -53,7 +53,8 @@ jobs:
             echo "Deploying Magnolia version ${{ github.event.inputs.magnolia_version }}"
             terraform plan -out=tfplan \
               -var "magnolia_version=${{ github.event.inputs.magnolia_version }}" \
-              -var "upgrade_mode=Automatic"
+              -var "upgrade_mode=Automatic" \
+              -var "instances=2"
           else
             terraform plan -out=tfplan
           fi
